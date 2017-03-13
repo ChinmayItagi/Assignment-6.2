@@ -1,4 +1,4 @@
-//Driver class
+//driver class
 
 import org.apache.hadoop.fs.Path; 
 import org.apache.hadoop.conf.*;
@@ -81,10 +81,7 @@ public class driver61 {
 		
 			}}
 
-
-//map61a
-
-
+//map for statement 1
 import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -95,19 +92,20 @@ public class map61 extends Mapper<LongWritable , Text, Text , IntWritable>{
 	public void map(LongWritable key , Text value , Context context) throws IOException, InterruptedException
 	{
 		String[] l = value.toString().split("\\s+");// splitting with space
+		int a = 0;
 		if(l.length>0)
 		{
 		String s = l[2] ;// considering the second element destination
 		if(s.equals("MIA") || s.equals("MCO"))
 		{
-			context.write(new Text("Number of passenger to MIA and MCO are:"), no);// input to the reduce class 
+			a = Integer.parseInt(l[4])+Integer.parseInt(l[5])+Integer.parseInt(l[6])+Integer.parseInt(l[7])+Integer.parseInt(l[8]);
+			context.write(new Text("Number of passenger to MIA and MCO are:"), new IntWritable(a));// input to the reduce class 
 		}
 	}
 	}
 }
 
-//map61b
-
+//map class for statement 2
 
 
 import java.io.IOException;
@@ -120,19 +118,21 @@ public class map61b extends Mapper<LongWritable , Text, Text , IntWritable>{
 	public void map(LongWritable key , Text value , Context context) throws IOException, InterruptedException
 	{
 		String[] l = value.toString().split("\\s+");
+		int a =0;
 		if(l.length>0)
 		{
 		String s = l[1];
 		if(s.equals("MIA") || s.equals("HOU"))
 		{
-			context.write(new Text("Number of passenger from MIA and HOU are:"), no);
+			a = Integer.parseInt(l[4])+Integer.parseInt(l[5])+Integer.parseInt(l[6])+Integer.parseInt(l[7])+Integer.parseInt(l[8]);
+			context.write(new Text("Number of passenger from MIA and HOU are:"), new IntWritable(a));
 		}
 	}
 	}
 }
 
 
-//map61c
+//map class for statement 3
 
 import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
@@ -144,6 +144,7 @@ public class map61c extends Mapper<LongWritable , Text, Text , IntWritable>{
 	public void map(LongWritable key , Text value , Context context) throws IOException, InterruptedException
 	{
 		String[] l = value.toString().split("\\s+");
+		int a = 0;
 		if(l.length>0)
 		{
 		String s = l[2];
@@ -151,23 +152,39 @@ public class map61c extends Mapper<LongWritable , Text, Text , IntWritable>{
 		if(s1==1 || s1==3 || s1==5 || s1==7)
 		if(s.equals("LAS") || s.equals("LAX"))
 		{
-			context.write(new Text("Number of passenger to LAS and LAX are:"), no);
+			a = Integer.parseInt(l[4])+Integer.parseInt(l[5])+Integer.parseInt(l[6])+Integer.parseInt(l[7])+Integer.parseInt(l[8]);
+			context.write(new Text("Number of passenger to LAS and LAX are:"), new IntWritable(a));
 		}
 	}
 	}
 }
 
-//command
+//reducer class
 
-chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop jar 61.jar /user/chins/travel.txt /user/chins/output/61aop5 /user/chins/output/61bop5 /user/chins/output/61cop5
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.mapreduce.Reducer;
+public class reduce61 extends Reducer<Text,IntWritable,Text, IntWritable> {
+	public void reduce(Text key, Iterable<IntWritable> value , Context con) throws IOException, InterruptedException
+	{
+		int sum =0;
+		for(IntWritable v : value)
+		{
+			sum = sum + v.get();
+		}
+		con.write(key, new IntWritable(sum));
+	}
+
+}
 
 
 //output
+chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61aop2/part-r-00000
+Number of passenger to MIA and MCO are:,611
+chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61bop2/part-r-00000
+Number of passenger from MIA and HOU are:,517
+chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61cop2/part-r-00000
+Number of passenger to LAS and LAX are:,362
 
-chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61aop5/part-r-00000
-Number of passenger to MIA and MCO are:,427
-chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61bop5/part-r-00000
-Number of passenger from MIA and HOU are:,312
-chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61cop5/part-r-00000
-Number of passenger to LAS and LAX are:,254
 
