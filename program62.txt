@@ -1,3 +1,11 @@
+
+Use key value output format to save the output of Session 6 
+–
+Assignment 1(Travel Data analysis) and save the output as comma (,) separated instead of(\t) separated.
+
+
+
+
 //driver class
 
 import org.apache.hadoop.fs.Path; 
@@ -186,5 +194,5 @@ chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61bop
 Number of passenger from MIA and HOU are:,517
 chinmay@Chinmay-ThinkPad-E460:~/Desktop$ hadoop fs -cat /user/chins/output/61cop2/part-r-00000
 Number of passenger to LAS and LAX are:,362
-
+Thus generated code with comma separated values
 
